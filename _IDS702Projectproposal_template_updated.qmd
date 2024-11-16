@@ -1,0 +1,288 @@
+---
+title: "Project Proposal"
+author: "Ilseop Lee, Ramil Mammadov, Tursunai Turumbekova, Yirang Liu"
+subtitle: "November 17"
+format: pdf
+output: pdf_document
+---
+
+#### Load Packages
+
+```{r load-packages, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+```
+
+## Dataset 1
+
+-   **Dataset Name**: Obesity Levels
+
+-   **Source**: Kaggle ([Obesity Levels Dataset](https://www.kaggle.com/datasets/fatemehmehrparvar/obesity-levels/data)); Original research source: [Estimation of Obesity Levels with a Trained Neural Network Approach Optimized by the Bayesian Technique](https://www.semanticscholar.org/paper/Estimation-of-Obesity-Levels-with-a-Trained-Neural-Ya%C4%9F%C4%B1n-G%C3%BCl%C3%BC/2c1eab51db154493d225c8b86ba885bbaf147a2c), DOI: 10.3390/app13063875
+
+-   **Brief description**: This dataset originates from a study aimed at estimating obesity levels based on demographic, dietary, and lifestyle factors, containing 2,111 records from individuals in Mexico, Peru, and Colombia. Of the data, 23% was directly collected from users via a web platform, while 77% was synthetically generated using the Weka tool and the SMOTE filter to ensure a balanced representation of obesity levels. Each row in the dataset represents a unique individual, capturing their demographic details, lifestyle habits, dietary patterns, and obesity classification. The target variable categorizes individuals into seven obesity levels.
+
+**Research Question 1: How does the interaction between family history of overweight (`family_history_with_overweight`) and the frequency of physical activity (`FAF`) influence an individual's BMI?**
+
+-   **Outcome Variable**: `BMI` (Continuous) - Body Mass Index calculated using the formula $BMI = \frac{Weight (kg)}{Height (m)^2}$​, representing an individual's body composition.
+
+-   **Explanatory Variables**: `family_history_with_overweight` (Binary: Yes/No), `FAF` (Continuous: Frequency of physical activity per week in days)
+
+-   **Interaction Term**: `family_history_with_overweight * FAF.` This interaction will help evaluate whether physical activity affects BMI differently based on whether an individual has a family history of overweight.
+
+**Research Question 2: How does the frequency of alcohol consumption (`CALC`) and meal frequency (`NCP`) jointly influence obesity levels?**
+
+-   **Outcome Variable**: `NObeyesdad` (Ordinal) - Obesity level classified into seven categories: Insufficient Weight, Normal Weight, Overweight Level I/II, and Obesity Type I/II/III.
+
+-   **Explanatory Variables**: `CALC` (Nominal: No, Sometimes, Frequently, Always), `NCP` (Continuous: Number of main meals per day)
+
+-   **Interaction Term**: `CALC * NCP` This interaction will help explore whether the frequency of alcohol consumption modifies the relationship between meal frequency and obesity levels.
+
+**Load the data and provide a `glimpse()`**:
+
+```{r, warning=FALSE}
+# Load the dataset
+obesity_data <- read_csv(
+  paste0(
+    "https://github.com/cathylyirang/IDS702_Project_Group_5/",
+    "raw/refs/heads/main/Data_Obesity/",
+    "ObesityDataSet_raw_and_data_sinthetic.csv"
+  ))
+obesity_data <- obesity_data |>
+  mutate(BMI = Weight / (Height^2))
+glimpse(obesity_data)
+```
+
+\newpage 
+
+### **Exploratory Plots:**
+
+**How does the interaction between family history of overweight (`family_history_with_overweight`) and physical activity frequency (`FAF`) influence an individual's BMI?**
+
+```{r, fig.width=3, fig.height=2}
+obesity_data |>ggplot(aes(x = BMI)) +
+  geom_histogram(binwidth = 1, alpha = 0.7) +labs(title = "Distribution of BMI", 
+  x = "Body Mass Index (BMI)", y = "Frequency") +theme_minimal()
+```
+
+```{r,warning=FALSE}
+obesity_data |> 
+  ggplot(aes(x = FAF, y = BMI, color = family_history_with_overweight)) +
+  geom_jitter(alpha = 0.4, width = 0.2) +
+  geom_smooth(method = "lm") +
+  labs(title = "BMI vs Physical Activity Frequency", 
+    subtitle = "Faceted by Family History of Overweight", 
+    x = "Physical Activity Frequency (Days per Week, FAF)", 
+    y = "Body Mass Index (BMI)", color = "Family History of Overweight") +
+  theme_minimal()
+```
+
+**How does the frequency of alcohol consumption (`CALC`) and meal frequency (`NCP`) jointly influence obesity levels (`NObeyesdad`)?**
+
+```{r, fig.width=4, fig.height=3}
+obesity_data |>ggplot(aes(x = NObeyesdad)) + geom_bar(alpha = 0.7) +labs(
+  title = "Distribution of Obesity Levels",x = "Obesity Level", 
+  y = "Count") +theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r, fig.width=6, fig.height=4, warning=FALSE}
+obesity_data |>ggplot(aes(x = NCP, fill = NObeyesdad)) +geom_density(alpha = 0.6) +
+              facet_wrap(~ CALC) +labs(
+              title = "Density of Meal Frequency by Obesity Levels",
+              subtitle = "Faceted by Alcohol Consumption",
+              x = "Number of Meals per Day (NCP)", y = "Density", 
+              fill = "Obesity Level") + theme_minimal()
+```
+
+\newpage 
+
+## Dataset 2
+
+-   **Dataset Name**: Wine Quality(2009)
+
+-   **Source:** UCI Machine Learning Repository (http://[archive.ics.uci.edu/dataset/186/wine+qualit](https://archive.ics.uci.edu/dataset/186/wine+quality))
+
+-   **Variables**: 14 variables and 6,497 observations of Portuguese "Vinho Verde" wine with 11 continuous variables (e.g., acidity, pH level), 2 categorical variables (red vs white, quality-low, medium, high) and 1 interval variable (quality score which ranges from 1 to 10)
+
+-   **Brief description**: Each row represents physicochecimal characteristic(e.g., acidity, pH level) of a wine sample, along with its quality score based on sensory evaluation.
+
+**Research question 1: What role do** **`alcohol` content and `citric acid` play in determining high-quality wine?**
+
+-   (Outcome variable) Quality Category(High, Medium, Low),
+
+-   (Interaction Term) ***`alcohol`*** \* ***`citric acid`***
+
+**Research question 2: How do `volatile acidity` and `total sulfur dioxide` levels interact to shape the wine quality score?**
+
+-   (Outcome variable) Wine quality categorized as low, medium, or high, based on the continuous quality score.
+
+-   (Interaction Term) ***`volatile acidity`*** \* ***`total sulfur dioxide`***
+
+**Load the data and provide a `glimpse()`**:
+
+```{r data-3, warning=FALSE}
+wine_data <- read_csv(
+  paste0(
+    "https://github.com/cathylyirang/IDS702_Project_Group_5/",
+    "raw/refs/heads/main/Data_Wine/",
+    "winequality_integrated.csv"
+  )
+)
+
+glimpse(wine_data)
+```
+
+\newpage 
+
+### **Exploratory Plots:**
+
+**What role do** **`alcohol` content and `citric acid` play in determining high-quality wine?**
+
+```{r, fig.width=6, fig.height=2}
+plot1 <- ggplot(wine_data, aes(x = quality_category, y = alcohol)) +
+  geom_boxplot() + labs(x = "Quality Category", y = "Alcohol Content")
+plot2 <- ggplot(wine_data, aes(x = quality_category, y = citric_acid)) +
+  geom_boxplot() + labs(x = "Quality Category", y = "Citric Acid")
+plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1, 1))
+ggplot(wine_data, aes(x = alcohol, y = citric_acid)) +
+  geom_point(alpha = 0.5, size = 0.2, color = "purple") + facet_wrap(~ quality_category) +
+  labs(title = "Faceted Plot of Alcohol and Citric Acid by Quality Category",
+    x = "Alcohol Content", y = "Citric Acid") + theme_minimal()
+```
+
+**How do `volatile acidity` and `total sulfur dioxide` levels interact to shape the wine quality score?**
+
+```{r, fig.width=6, fig.height=2}
+plot1 <- ggplot(wine_data, aes(x = factor(quality), y = total_sulfur_dioxide)) +
+  geom_boxplot() + labs(x = "Quality Score", y = "Total Sulfur Dioxide") + theme_minimal()
+plot2 <- ggplot(wine_data, aes(x = factor(quality), y = volatile_acidity)) + geom_boxplot() +
+  labs(x = "Quality Score", y = "Volatile Acidity") + theme_minimal()
+plot_grid(plot1, plot2, ncol = 2, rel_widths = c(1, 1))
+
+ggplot(wine_data, aes(x = volatile_acidity, y = total_sulfur_dioxide, color = quality)) +
+  geom_point(alpha = 0.5, size = 0.2) +
+  scale_color_gradient(low = "white", high = "purple") +
+  labs(x = "Volatile Acidity", y = "Total Sulfur Dioxide", color = "Quality Score") +
+  theme_minimal() + coord_cartesian(ylim = c(0, 300)) 
+```
+
+\newpage 
+
+## Dataset 3
+
+**Dataset Name:** Student Performance
+
+**Data source:** UC Irvine Machine Learning Repository (November 26, 2014), Cortez, P. (2008). Student Performance \[Dataset\]. UCI Machine Learning Repository. <https://doi.org/10.24432/C5TG7T.>
+
+**Brief description:** This dataset examines student achievement in secondary education at two Portuguese schools. Its attributes include student grades, demographic, social, and school-related features, and it was collected using school reports and questionnaires. The data specifically focuses on performance in Portuguese language classes. In \[Cortez and Silva, 2008\], the data set was modeled under binary/five-level classification and regression tasks.
+
+**Observations**: The dataset contains 649 observations and 33 columns. Each row represents a unique student and captures a range of demographic, familial, academic, and personal attributes, including demographics, family background, academic details, and personal and social aspects. These attributes provide insights into each student’s background and academic progress, making the dataset useful for analyzing factors that influence academic performance.
+
+**Research question 1: How does the amount of study time relate to final grade performance (Grade_3), and does it vary based on family support?**
+
+-   **Outcome Variable**: Grade 3 (Continuous)
+
+-   **Primary Independent Variables**: Study time (continuous) and Family support (nominal, with interaction)
+
+**Research question 2: Is there an association between family relationship quality and school absences?**
+
+-   **Outcome Variable**: school absences (ordinal)
+-   **Primary Independent Variable**: family relationship (ordinal)
+
+**Load the data and provide a `glimpse()`**:
+
+```{r, warning=FALSE}
+
+student_data <- read_delim(
+  paste0(
+    "https://github.com/Ramil-cyber/Student_data/",
+    "raw/refs/heads/main/",
+    "student_data.csv"
+  ),
+  delim = ";"
+)
+
+glimpse(student_data)
+```
+
+### **Exploratory Plots**
+
+**How does the amount of study time relate to final grade performance (Grade_3), and does it vary based on family support?**
+
+**Grade Distribution**: The distribution of `Grade_3` shows a range of final grades, suggesting variations in student performance.
+
+```{r, fig.width=4, fig.height=3}
+ggplot(student_data, aes(x = Grade_3)) +
+  geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
+  geom_density(aes(y = after_stat(count)), color = "red", linewidth = 1) + 
+  labs(title = "Distribution of Final Grade (Grade_3)", x = "Final Grade", 
+       y = "Number of Students") +theme_minimal()
+```
+
+**Grade and Study Time with Family Support**: The box plot highlights the interaction between study time and family support, suggesting that the positive impact of family support is most evident when students already study for at least 5 hours. This implies that family support is effective when it supplements a student's efforts. In the lowest study time group (0-2 hours), grades are generally low and variable, regardless of family support, indicating that without a minimum level of study time, family support alone is insufficient to drive high academic achievement.
+
+```{r, fig.width=6, fig.height=4}
+student_data$study_time_binned <- cut(student_data$study_time, 
+                              breaks = 4, 
+                              labels = c("0-2 hours", "2-5 hours", 
+                                         "5-10 hours", "10+ hours"))
+ggplot(student_data, aes(x = study_time_binned, y = Grade_3, fill = family_support)) +
+  geom_boxplot() +
+  labs(title = "Final Grade (Grade_3) by Study Time and Family Educational Support",
+       x = "Study Time", y = "Final Grade", fill = "Family Educational Support") +
+  theme_minimal()
+```
+
+**Is there an association between family relationship quality and school absences?**
+
+**School Absences**: The distribution of `school_absences` is right-skewed, indicating that most students have relatively few absences.
+
+```{r, fig.width=3, fig.height=2}
+ggplot(student_data, aes(x = school_absences)) +
+  geom_histogram(binwidth = 1.5, fill = "lightgreen", color = "black") +
+  labs(title = "Distribution of School Absences", x = "School Absences", 
+       y = "Number of Students") +theme_minimal()
+```
+
+**School Absences and Family Relationship:** The bar chart shows how family relationship quality influences school absences. Strong family relationships (category 5) may support better attendance, while moderate relationships (category 4) are linked to higher absences, possibly due to emotional or logistical challenges. Interestingly, students with very poor family relationships (categories 1 and 2) have the fewest absences, perhaps due to discomfort at home or a lack of support to address personal issues by missing school.
+
+```{r, fig.width=4, fig.height=3}
+ggplot(student_data, aes(x = as.factor(family_relationship), y = school_absences)) +
+  geom_bar(stat = "identity", fill = "yellow", color = "black") +
+  labs(title = "School Absences by Family Relationship Quality", 
+       x = "Family Relationship Quality", y = "School Absences in total") +
+  theme_minimal()
+```
+
+\newpage
+
+# Team Charter
+
+#### When will you meet as a team to work on the project components? Will these meetings be held in person or virtually?
+
+**Regular Meetings:**
+
+-   **Timing:** Every Tuesday.
+
+-   **Format:** In-person until Nov 27. After Nov 27, meetings will be held virtually to accommodate end-of-semester schedules.
+
+**Additional Meetings:**
+
+-   **Virtual Kickback Calls:** These will be scheduled as needed to discuss project details outside of regular Tuesday meetings.
+
+#### What is your group policy on missing team meetings (e.g., how much advance notice should be provided)?
+
+**Policy on Missing Team Meetings:**
+
+-   Members are required to give **at least 24 hours' notice** if they anticipate missing a meeting, except in emergencies. This allows the team to reassign tasks if needed.
+
+#### How will your team communicate (email, Slack, text messages)? What is your policy on appropriate response time (within a certain number of hours? Nights/weekends?)?
+
+**Communication Channels and Response Times:**
+
+-   **Primary Communication:** Slack will be used for regular discussions and document sharing.
+
+-   **Emergency Communication:** WhatsApp/Text Messages will be used for urgent situations.
+
+-   **Response Time:** Team members are expected to respond within **12 hours on weekdays**. Responses on nights and weekends are encouraged but not mandatory, except in urgent situations or near project deadlines.
