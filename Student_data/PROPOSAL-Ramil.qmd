@@ -1,0 +1,105 @@
+---
+title: "Project Proposal"
+author: "Ramil Mammadov(rm564), "
+subtitle: "Due November 17 at 11:59pm"
+execute:
+  echo: false
+format:
+  pdf:
+    fig-width: 6.5
+    fig-height: 2
+---
+
+#### Load Packages
+
+```{r load-packages, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(dplyr)
+```
+
+# Dataset 1
+
+**Dataset Name:** Student Performance
+
+**Data source:** UC Irvine Machine Learning Repository (November 26, 2014), Cortez, P. (2008). Student Performance \[Dataset\]. UCI Machine Learning Repository.
+
+[https://doi.org/10.24432/C5TG7T](https://doi.org/10.24432/C5TG7T.){.uri}
+
+**Brief description:** This dataset examines student achievement in secondary education at two Portuguese schools. Its attributes include student grades, demographic, social, and school-related features, and it was collected using school reports and questionnaires. The data specifically focuses on performance in Portuguese language classes. In \[Cortez and Silva, 2008\], the data set was modeled under binary/five-level classification and regression tasks.
+
+**Observations**: The dataset contains 649 observations and 33 columns. Each row represents a unique student and captures a range of demographic, familial, academic, and personal attributes, including demographics, family background, academic details, and personal and social aspects. These attributes provide insights into each student’s background and academic progress, making the dataset useful for analyzing factors that influence academic performance.
+
+**Research question 1:** How does the amount of study time relate to final grade performance (Grade_3), and does it vary based on family support?
+
+-   **Outcome Variable**: Grade 3 (Continuous)
+
+-   **Primary Independent Variables**: Study time (continuous) and Family support (nominal, with interaction)
+
+**Research question 2:** Is there an association between family relationship quality and school absences?
+
+-   **Outcome Variable**: school absences (ordinal)
+
+<!-- -->
+
+-   **Primary Independent Variable**: family relationship (ordinal)
+
+**Load the data and provide a `glimpse()`**:
+
+```{r data-1, warning=FALSE}
+
+student_data <- read_delim("https://github.com/Ramil-cyber/Student_data/raw/refs/heads/main/student_data.csv", delim = ";")
+
+glimpse(student_data)
+```
+
+## **Exploratory Data Analysis (EDA)**
+
+### **Question 1 EDA**
+
+#### **Exploratory Plots:**
+
+**1) Grade Distribution**: The distribution of `Grade_3` shows a range of final grades, suggesting variations in student performance.
+
+```{r plots-1 }
+library(ggplot2)
+
+ggplot(student_data, aes(x = Grade_3)) +
+  geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
+  geom_density(aes(y = after_stat(count)), color = "red", linewidth = 1) + 
+  labs(title = "Distribution of Final Grade (Grade_3)", x = "Final Grade", y = "Number of Students") +
+  theme_minimal()
+```
+
+**2) Grade and Study Time with Family Support**: The box plot highlights the interaction between study time and family support, suggesting that the positive impact of family support is most evident when students already study for at least 5 hours. This implies that family support is effective when it supplements a student's efforts. In the lowest study time group (0-2 hours), grades are generally low and variable, regardless of family support, indicating that without a minimum level of study time, family support alone is insufficient to drive high academic achievement.
+
+```{r}
+student_data$study_time_binned <- cut(student_data$study_time, 
+                              breaks = 4, 
+                              labels = c("0-2 hours", "2-5 hours", "5-10 hours", "10+ hours"))
+ggplot(student_data, aes(x = study_time_binned, y = Grade_3, fill = family_support)) +
+  geom_boxplot() +
+  labs(title = "Final Grade (Grade_3) by Study Time and Family Educational Support",
+       x = "Study Time", y = "Final Grade", fill = "Family Educational Support") +
+  theme_minimal()
+```
+
+## **Question 2 EDA**
+
+**1) School Absences**: The distribution of `school_absences` is right-skewed, indicating that most students have relatively few absences.
+
+```{r}
+ggplot(student_data, aes(x = school_absences)) +
+  geom_histogram(binwidth = 1.5, fill = "lightgreen", color = "black") +
+  labs(title = "Distribution of School Absences", x = "School Absences", y = "Number of Students") +
+  theme_minimal()
+```
+
+**2) School absences and Family Relationship**: The bar chart demonstrates The relationship between school absences and family relationship school absences and family relationship. Family relationship quality impacts school attendance in nuanced ways. Strong family relationships (category 5) may help maintain school attendance, while moderate relationships (category 4) seem associated with higher absences, possibly due to emotional or logistical challenges at home. Another interesting factor is that according to the data students who rate their family relationships as very poor (category 1 and 2) have the fewest absences too. It’s possible that these students may not feel comfortable staying home or may lack the family support to address personal issues by staying out of school.
+
+```{r}
+ggplot(student_data, aes(x = as.factor(family_relationship), y = school_absences)) +
+  geom_bar(stat = "identity", fill = "orange") +
+  labs(title = "School Absences by Family Relationship Quality", 
+       x = "Family Relationship Quality", y = "School Absences in total") +
+  theme_minimal()
+```
