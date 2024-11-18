@@ -2,6 +2,8 @@
 title: "Project Proposal"
 author: "Ilseop Lee, Ramil Mammadov, Tursunai Turumbekova, Yirang Liu"
 subtitle: "November 17"
+execute:
+  echo: false
 format: pdf
 output: pdf_document
 ---
@@ -54,19 +56,17 @@ obesity_data <- obesity_data |>
 glimpse(obesity_data)
 ```
 
-\newpage
-
 ### **Exploratory Plots:**
 
 **How does the interaction between family history of overweight (`family_history_with_overweight`) and physical activity frequency (`FAF`) influence an individual's BMI?**
 
-```{r, fig.width=3, fig.height=2}
+```{r, fig.width=6, fig.height=2.5}
 obesity_data |>ggplot(aes(x = BMI)) +
   geom_histogram(binwidth = 1, alpha = 0.7) +labs(title = "Distribution of BMI", 
   x = "Body Mass Index (BMI)", y = "Frequency") +theme_minimal()
 ```
 
-```{r,warning=FALSE}
+```{r,warning=FALSE,fig.width=6, fig.height=2.5}
 obesity_data |> 
   ggplot(aes(x = FAF, y = BMI, color = family_history_with_overweight)) +
   geom_jitter(alpha = 0.4, width = 0.2) +
@@ -87,13 +87,13 @@ Genetic predisposition or shared lifestyle habits could play a role in the highe
 
 **How does the frequency of alcohol consumption (`CALC`) and meal frequency (`NCP`) jointly influence obesity levels (`NObeyesdad`)?**
 
-```{r, fig.width=4, fig.height=3}
+```{r, fig.width=6, fig.height=3}
 obesity_data |>ggplot(aes(x = NObeyesdad)) + geom_bar(alpha = 0.7) +labs(
   title = "Distribution of Obesity Levels",x = "Obesity Level", 
   y = "Number of people") +theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-```{r, fig.width=6, fig.height=4, warning=FALSE}
+```{r, fig.width=6, fig.height=3, warning=FALSE}
 obesity_data |> 
   ggplot(aes(x = NCP, fill = NObeyesdad)) +
   geom_histogram(binwidth = 1, alpha = 0.6, position = "dodge") +
@@ -109,8 +109,6 @@ obesity_data |>
 ```
 
 The plot highlights the dominant pattern of individuals having 3 meals per day across all groups. Alcohol consumption seems to show some correlation with obesity levels, particularly for those in the `Sometimes` group. However, data is comparatively thin for the `Always` and `Frequently` groups.
-
-\newpage
 
 ## Dataset 2
 
@@ -148,13 +146,11 @@ wine_data <- read_csv(
 glimpse(wine_data)
 ```
 
-\newpage
-
 ### **Exploratory Plots:**
 
 **What role do** **`alcohol` content and `citric acid` play in determining high-quality wine?**
 
-```{r, fig.width=6, fig.height=2}
+```{r, fig.width=6, fig.height=2.5}
 plot1 <- ggplot(wine_data, aes(x = quality_category, y = alcohol)) +
   geom_boxplot() + labs(x = "Quality Category", y = "Alcohol Content")
 plot2 <- ggplot(wine_data, aes(x = quality_category, y = citric_acid)) +
@@ -168,7 +164,7 @@ ggplot(wine_data, aes(x = alcohol, y = citric_acid)) +
 
 **How do `volatile acidity` and `total sulfur dioxide` levels interact to shape the wine quality score?**
 
-```{r, fig.width=6, fig.height=2}
+```{r, fig.width=6, fig.height=2.5}
 plot1 <- ggplot(wine_data, aes(x = factor(quality), y = total_sulfur_dioxide)) +
   geom_boxplot() + labs(x = "Quality Score", y = "Total Sulfur Dioxide") + theme_minimal()
 plot2 <- ggplot(wine_data, aes(x = factor(quality), y = volatile_acidity)) + geom_boxplot() +
@@ -182,13 +178,13 @@ ggplot(wine_data, aes(x = volatile_acidity, y = total_sulfur_dioxide, color = qu
   theme_minimal() + coord_cartesian(ylim = c(0, 300)) 
 ```
 
-\newpage
-
 ## Dataset 3
 
 **Dataset Name:** Student Performance
 
-**Data source:** UC Irvine Machine Learning Repository (November 26, 2014), Cortez, P. (2008). Student Performance \[Dataset\]. UCI Machine Learning Repository. <https://doi.org/10.24432/C5TG7T.>
+**Data source:** UC Irvine Machine Learning Repository (November 26, 2014), Cortez, P. (2008). Student Performance \[Dataset\]. UCI Machine Learning Repository.
+
+[https://doi.org/10.24432/C5TG7T](https://doi.org/10.24432/C5TG7T.){.uri}
 
 **Brief description:** This dataset examines student achievement in secondary education at two Portuguese schools. Its attributes include student grades, demographic, social, and school-related features, and it was collected using school reports and questionnaires. The data specifically focuses on performance in Portuguese language classes. In \[Cortez and Silva, 2008\], the data set was modeled under binary/five-level classification and regression tasks.
 
@@ -227,7 +223,7 @@ glimpse(student_data)
 
 **Grade Distribution**: The distribution of `Grade_3` shows a range of final grades, suggesting variations in student performance.
 
-```{r, fig.width=4, fig.height=3}
+```{r, fig.width=6, fig.height=2.5}
 ggplot(student_data, aes(x = Grade_3)) +
   geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
   geom_density(aes(y = after_stat(count)), color = "red", linewidth = 1) + 
@@ -237,7 +233,7 @@ ggplot(student_data, aes(x = Grade_3)) +
 
 **Grade and Study Time with Family Support**: The box plot highlights the interaction between study time and family support, suggesting that the positive impact of family support is most evident when students already study for at least 5 hours. This implies that family support is effective when it supplements a student's efforts. In the lowest study time group (0-2 hours), grades are generally low and variable, regardless of family support, indicating that without a minimum level of study time, family support alone is insufficient to drive high academic achievement.
 
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=6.5, fig.height=2.5}
 student_data$study_time_binned <- cut(student_data$study_time, 
                               breaks = 4, 
                               labels = c("0-2 hours", "2-5 hours", 
@@ -253,7 +249,7 @@ ggplot(student_data, aes(x = study_time_binned, y = Grade_3, fill = family_suppo
 
 **School Absences**: The distribution of `school_absences` is right-skewed, indicating that most students have relatively few absences.
 
-```{r, fig.width=3, fig.height=2}
+```{r, fig.width=6, fig.height=2.5}
 ggplot(student_data, aes(x = school_absences)) +
   geom_histogram(binwidth = 1.5, fill = "lightgreen", color = "black") +
   labs(title = "Distribution of School Absences", x = "School Absences", 
@@ -262,15 +258,13 @@ ggplot(student_data, aes(x = school_absences)) +
 
 **School Absences and Family Relationship:** The bar chart shows how family relationship quality influences school absences. Strong family relationships (category 5) may support better attendance, while moderate relationships (category 4) are linked to higher absences, possibly due to emotional or logistical challenges. Interestingly, students with very poor family relationships (categories 1 and 2) have the fewest absences, perhaps due to discomfort at home or a lack of support to address personal issues by missing school.
 
-```{r, fig.width=3, fig.height=2}
+```{r, fig.width=6, fig.height=2.5}
 ggplot(student_data, aes(x = as.factor(family_relationship), y = school_absences)) +
   geom_bar(stat = "identity", fill = "orange") +
   labs(title = "School Absences by Family Relationship Quality", 
        x = "Family Relationship Quality", y = "School Absences in total") +
   theme_minimal()
 ```
-
-\newpage
 
 # Team Charter
 
