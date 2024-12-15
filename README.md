@@ -30,12 +30,9 @@ The analysis leverages a dataset containing demographic, dietary, and lifestyle 
 ## Installation and Setup
 1. Clone the repository:
    ```bash
-   git clone <repository_url>
+   git clone <https://github.com/cathylyirang/IDS702_Project_Group_5.git>
    ```
-2. Install required Python packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
+
 
 ---
 
@@ -47,30 +44,7 @@ The analysis leverages a dataset containing demographic, dietary, and lifestyle 
 
 ---
 
-## Usage
-1. **Data Preprocessing**:
-   - Run the preprocessing script to clean and prepare the data.
-     ```bash
-     python src/preprocess_data.py
-     ```
 
-2. **Exploratory Data Analysis (EDA)**:
-   - Open the EDA notebook:
-     ```bash
-     jupyter notebook notebooks/eda.ipynb
-     ```
-
-3. **Model Training**:
-   - Execute the scripts for MLR and Ordinal Logistic Regression:
-     ```bash
-     python src/run_mlr.py
-     python src/run_ordinal_logistic.py
-     ```
-
-4. **Results Visualization**:
-   - View generated plots in the `results/` directory.
-
----
 
 ## Results Summary
 ### Research Question 1: Interaction Between Family History and Physical Activity on BMI
@@ -81,16 +55,6 @@ The analysis leverages a dataset containing demographic, dietary, and lifestyle 
 
 ---
 
-## Dependencies
-- Python >= 3.8
-- Pandas
-- NumPy
-- Matplotlib
-- Scikit-learn
-- Statsmodels
-- Jupyter Notebook
-
----
 
 ## Future Work
 - Include additional measures of body composition (e.g., body fat percentage, waist-to-hip ratio).
@@ -113,5 +77,3 @@ The analysis leverages a dataset containing demographic, dietary, and lifestyle 
 
 ---
 
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
