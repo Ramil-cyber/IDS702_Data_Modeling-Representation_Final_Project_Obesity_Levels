@@ -30,7 +30,7 @@ The analysis leverages a dataset containing demographic, dietary, and lifestyle 
 ## Installation and Setup
 1. Clone the repository:
    ```bash
-   git clone <https://github.com/cathylyirang/IDS702_Project_Group_5.git>
+   git clone https://github.com/cathylyirang/IDS702_Project_Group_5.git
    ```
 
 
