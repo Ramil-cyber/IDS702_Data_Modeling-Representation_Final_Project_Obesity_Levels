@@ -1,5 +1,5 @@
 # IDS702_Project_Group_5
-![BMI Categories](BMI-categories-1024x535.jpg)
+![BMI Categories](Images/BMI-categories-1024x535.jpg)
 
 # Unveiling Obesity Dynamics: Interactions Between Lifestyle and Genetic Factors
 
